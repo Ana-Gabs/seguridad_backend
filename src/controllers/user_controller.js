@@ -9,7 +9,7 @@ const users = [
 exports.login = (req, res) => {
   const { username, password } = req.body;
 
-  // validar  que los campos no estén vacíos
+  /*validar  que los campos no estén vacios*/
   if (!username || !password) {
     return res.status(400).json({
       statusCode: 400,
@@ -28,9 +28,9 @@ exports.login = (req, res) => {
   }
 
   // se crea un  token JWT, que exiprará 1 minuto despues
-  const token = jwt.sign({ id: user.id, username: user.username }, "secreto", {
+  const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, {
     expiresIn: "1m",
-  });
+  });  
 
   res.status(200).json({
     statusCode: 200,
