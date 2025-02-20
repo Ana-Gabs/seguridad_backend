@@ -1,18 +1,22 @@
 const express = require("express");
 const {
-  getUsers, deleteUser, updateUser,
+  login, register, getUsers, deleteUser, updateUser,
   updateRol, addRol, deleteRol,
   addPermission, deletePermission
-} = require("../controllers/user_controller");
+} = require("../controllers/user_controller");  // Asegurar que login y register estén aquí
 const { verifyTokenAndPermissions } = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
-// Definir rutas con protección por permisos
-router.get("/users", verifyTokenAndPermissions("get_user"), getUsers);
-router.delete("/users/:id", verifyTokenAndPermissions("delete_user"), deleteUser);
-router.put("/users/:id", verifyTokenAndPermissions("update_user"), updateUser);
-router.put("/users/:id/role", verifyTokenAndPermissions("update_rol"), updateRol);
+// Rutas de autenticación
+router.post("/login", login);
+router.post("/register", register);
+
+// Rutas protegidas con permisos
+router.get("/", verifyTokenAndPermissions("get_user"), getUsers);
+router.delete("/:id", verifyTokenAndPermissions("delete_user"), deleteUser);
+router.put("/:id", verifyTokenAndPermissions("update_user"), updateUser);
+router.put("/:id/role", verifyTokenAndPermissions("update_rol"), updateRol);
 
 router.post("/roles", verifyTokenAndPermissions("add_rol"), addRol);
 router.delete("/roles/:rol", verifyTokenAndPermissions("delete_rol"), deleteRol);
