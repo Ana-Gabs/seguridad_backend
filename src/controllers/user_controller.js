@@ -75,13 +75,13 @@ exports.login = async (req, res) => {
     res.status(200).json({
       statusCode: 200,
       token,
-      user: {
+      /*user: {
         email: userData.email,
         username: userData.username,
         rol: userData.rol,
         permissions,
-        last_login: lastLoginDate, // Usamos la fecha real actualizada
-      },
+        last_login: lastLoginDate,
+      },*/
     });
 
   } catch (error) {
@@ -137,3 +137,4 @@ exports.register = async (req, res) => {
     res.status(500).json({ error: "Error al registrar usuario" });
   }
 };
+
