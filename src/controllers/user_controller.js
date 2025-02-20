@@ -138,3 +138,146 @@ exports.register = async (req, res) => {
   }
 };
 
+
+/**** Listar todos los usuarios ****/
+exports.getUsers = async (req, res) => {
+  try {
+    const usersSnap = await db.collection("users").get();
+    const users = usersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    res.status(200).json({ statusCode: 200, users });
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener usuarios" });
+  }
+};
+
+// Eliminar un usuario por ID
+exports.deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.collection("users").doc(id).delete();
+    res.status(200).json({ message: "Usuario eliminado correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al eliminar usuario" });
+  }
+};
+
+// Actualizar un usuario
+exports.updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    await db.collection("users").doc(id).update(updateData);
+    res.status(200).json({ message: "Usuario actualizado correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al actualizar usuario" });
+  }
+};
+
+// Actualizar rol de un usuario
+exports.updateRol = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rol } = req.body;
+
+    await db.collection("users").doc(id).update({ rol });
+    res.status(200).json({ message: "Rol actualizado correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al actualizar rol" });
+  }
+};
+
+// Agregar un nuevo rol
+exports.addRol = async (req, res) => {
+  try {
+    const { rol, permissions } = req.body;
+
+    const roleRef = db.collection("roles").doc("1");
+    const roleSnap = await roleRef.get();
+
+    if (!roleSnap.exists) {
+      return res.status(404).json({ error: "No se encontraron roles" });
+    }
+
+    const roleData = roleSnap.data();
+    roleData[rol] = permissions;
+
+    await roleRef.update(roleData);
+    res.status(201).json({ message: "Rol agregado con éxito" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al agregar rol" });
+  }
+};
+
+// Eliminar un rol
+exports.deleteRol = async (req, res) => {
+  try {
+    const { rol } = req.params;
+
+    const roleRef = db.collection("roles").doc("1");
+    const roleSnap = await roleRef.get();
+
+    if (!roleSnap.exists) {
+      return res.status(404).json({ error: "No se encontraron roles" });
+    }
+
+    const roleData = roleSnap.data();
+    delete roleData[rol];
+
+    await roleRef.update(roleData);
+    res.status(200).json({ message: "Rol eliminado correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al eliminar rol" });
+  }
+};
+
+// Agregar un nuevo permiso a un rol
+exports.addPermission = async (req, res) => {
+  try {
+    const { rol, permission } = req.body;
+
+    const roleRef = db.collection("roles").doc("1");
+    const roleSnap = await roleRef.get();
+
+    if (!roleSnap.exists) {
+      return res.status(404).json({ error: "No se encontraron roles" });
+    }
+
+    const roleData = roleSnap.data();
+    if (!roleData[rol]) {
+      return res.status(404).json({ error: "El rol no existe" });
+    }
+
+    roleData[rol].push(permission);
+    await roleRef.update(roleData);
+    res.status(201).json({ message: "Permiso agregado con éxito" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al agregar permiso" });
+  }
+};
+
+// Eliminar un permiso de un rol
+exports.deletePermission = async (req, res) => {
+  try {
+    const { rol, permission } = req.body;
+
+    const roleRef = db.collection("roles").doc("1");
+    const roleSnap = await roleRef.get();
+
+    if (!roleSnap.exists) {
+      return res.status(404).json({ error: "No se encontraron roles" });
+    }
+
+    const roleData = roleSnap.data();
+    if (!roleData[rol]) {
+      return res.status(404).json({ error: "El rol no existe" });
+    }
+
+    roleData[rol] = roleData[rol].filter(p => p !== permission);
+    await roleRef.update(roleData);
+    res.status(200).json({ message: "Permiso eliminado correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al eliminar permiso" });
+  }
+};
