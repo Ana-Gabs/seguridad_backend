@@ -53,6 +53,7 @@ exports.login = async (req, res) => {
     }
 
     // Extraer permisos según el rol del usuario
+    console.log(roleSnap)
     const roleData = roleSnap.data();
     const permissions = roleData[userData.rol] || [];
 
@@ -137,7 +138,6 @@ exports.register = async (req, res) => {
     res.status(500).json({ error: "Error al registrar usuario" });
   }
 };
-
 
 /**** Listar todos los usuarios ****/
 exports.getUsers = async (req, res) => {

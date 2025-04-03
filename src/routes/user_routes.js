@@ -3,7 +3,7 @@ const {
   login, register, getUsers, deleteUser, updateUser,
   updateRol, addRol, deleteRol,
   addPermission, deletePermission
-} = require("../controllers/user_controller");  // Asegurar que login y register estén aquí
+} = require("../controllers/user_controller");  
 const { verifyTokenAndPermissions } = require("../middlewares/authMiddleware");
 
 const router = express.Router();

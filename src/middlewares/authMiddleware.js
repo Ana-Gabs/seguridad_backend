@@ -1,6 +1,6 @@
+// ./middleware/authMiddlewarejs
 const jwt = require("jsonwebtoken");
 
-// Middleware para validar token y permisos
 exports.verifyTokenAndPermissions = (requiredPermission) => {
   return (req, res, next) => {
     try {
